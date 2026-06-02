@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    generate-ddl: false
+  datasource:
+    url: jdbc:tc:postgresql:16-alpine:///db
+    username: usr
+    password: pwd
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver

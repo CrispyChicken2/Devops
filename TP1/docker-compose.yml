@@ -1,0 +1,51 @@
+services:
+  database:
+    build:
+      context: ./database
+    image: devops-database:1.0
+    env_file:
+      - ./simpleapi/.env
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./simpleapi
+    image: java-simple-api:1.0
+    env_file:
+      - ./simpleapi/.env
+    networks:
+      - app-network
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: unless-stopped
+
+  httpd:
+    build:
+      context: ./httpd
+    image: devops-httpd:1.0
+    env_file:
+      - ./simpleapi/.env
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  database-data:
