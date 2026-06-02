@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Requis par SonarCloud
+          fetch-depth: 0
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -41,11 +41,12 @@ jobs:
 
       - name: Analyze with SonarCloud
         working-directory: TP1/simpleapi
-        # On compile et on analyse, mais on passe les tests unitaires (-DskipTests) puisqu'ils ont déjà été faits
         run: mvn -B verify sonar:sonar -DskipTests -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION_KEY }} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.qualitygate.wait=true
 
   build-and-push-docker-image:
     needs: sonar-analysis
+    # Condition ajoutée : ce job ne s'exécute QUE si la branche est 'main'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -68,7 +69,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./TP1/database
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: true
           tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
 
       - name: Build image and push httpd
