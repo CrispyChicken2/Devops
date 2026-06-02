@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -23,6 +25,9 @@ jobs:
       - name: Build and test with Maven
         working-directory: TP1/simpleapi
         run: mvn -B clean verify
+
+      - name: Analyze with SonarCloud
+        run: mvn -B verify sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION_KEY }} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }} --file ./TP1/simpleapi/pom.xml
 
   build-and-push-docker-image:
     needs: test-backend
@@ -47,13 +52,13 @@ jobs:
       - name: Build image and push database
         uses: docker/build-push-action@v6
         with:
-          context: ./TP1/database # À adapter selon l'arborescence exacte
-          push: true
+          context: ./TP1/database
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
 
       - name: Build image and push httpd
         uses: docker/build-push-action@v6
         with:
-          context: ./TP1/httpd # À adapter selon l'arborescence exacte
+          context: ./TP1/httpd
           push: true
           tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-httpd:latest
