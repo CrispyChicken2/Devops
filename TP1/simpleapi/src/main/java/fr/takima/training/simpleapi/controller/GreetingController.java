@@ -8,11 +8,11 @@ import java.util.concurrent.atomic.AtomicLong;
 @CrossOrigin
 public class GreetingController {
 
-    private static final String TEMPLATE = "Bonjour, %s!";
+    private static final String TEMPLATE = "Y a rien , %s!";
     private final AtomicLong counter = new AtomicLong();
 
     @GetMapping
-    public Greeting greeting(@RequestParam(value = "name", defaultValue = "Le Monde") String name) {
+    public Greeting greeting(@RequestParam(value = "name", defaultValue = "qui fonctionne") String name) {
         return new Greeting(counter.incrementAndGet(), String.format(TEMPLATE, name));
     }
 
