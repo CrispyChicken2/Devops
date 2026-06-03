@@ -7,9 +7,7 @@
       - name: app-network
     ports:
       - "80:80"
-    links:
-      - "tp-api:${SIMPLEAPI_HOST}"
     env:
-      SIMPLEAPI_HOST: "tp-api"  # On cible le vrai nom du conteneur API !
+      SIMPLEAPI_HOST: "tp-api"
     restart_policy: always
     state: started

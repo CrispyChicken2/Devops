@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   workflow_run:
     workflows:
-      - CI devops 2025
+      - CI devops 2026
     branches:
       - main
     types:
@@ -12,7 +12,6 @@ on:
 
 jobs:
   build-and-push-backend:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -35,7 +34,6 @@ jobs:
           push: true
 
   build-and-push-database:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -58,7 +56,6 @@ jobs:
           push: true
 
   build-and-push-httpd:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -81,9 +78,7 @@ jobs:
           push: true
 
   deployment:
-    # On s'assure que le déploiement ne se lance que SI les 3 builds ont réussi
     needs: [build-and-push-backend, build-and-push-database, build-and-push-httpd]
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -101,11 +96,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ansible
 
+      - name: Install community.docker Ansible collection
+        run: ansible-galaxy collection install community.docker
+
       - name: Create vars.yml on the fly
-        # Attention à bien adapter le chemin "ansible/inventories" si ton dossier Ansible n'est pas à la racine de ton repo
         run: |
-          mkdir -p ansible/inventories
-          cat <<EOF > ansible/inventories/vars.yml
+          cat <<EOF > my-project/ansible/inventories/vars.yml
           ---
           postgres_db: "${{ secrets.ENV_POSTGRES_DB }}"
           postgres_user: "${{ secrets.ENV_POSTGRES_USER }}"
@@ -114,8 +110,7 @@ jobs:
 
       - name: Run Ansible Playbook
         env:
-          ANSIBLE_HOST_KEY_CHECKING: "False" # Toujours indispensable sur GitHub pour éviter le prompt de confirmation
+          ANSIBLE_HOST_KEY_CHECKING: "False"
         run: |
-          cd ansible
-          # L'argument --private-key écrase le /home/asus/ de ton setup.yml
+          cd my-project/ansible
           ansible-playbook -i inventories/setup.yml playbook.yml --private-key ~/.ssh/id_rsa
