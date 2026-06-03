@@ -79,3 +79,40 @@ jobs:
           context: ./TP1/httpd
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
           push: true
+
+  deployment:
+    # On s'assure que le déploiement ne se lance que SI les 3 builds ont réussi
+    needs: [build-and-push-backend, build-and-push-database, build-and-push-httpd]
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.TAKIMA_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H oscar.hunaut.takima.school >> ~/.ssh/known_hosts
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Create vars.yml on the fly
+        # Attention à bien adapter le chemin "ansible/inventories" si ton dossier Ansible n'est pas à la racine de ton repo
+        run: |
+          mkdir -p ansible/inventories
+          cat <<EOF > ansible/inventories/vars.yml
+          ---
+          postgres_db: "${{ secrets.ENV_POSTGRES_DB }}"
+          postgres_user: "${{ secrets.ENV_POSTGRES_USER }}"
+          postgres_password: "${{ secrets.ENV_POSTGRES_PASSWORD }}"
+          EOF
+
+      - name: Run Ansible Playbook
+        run: |
+          cd ansible # Navigue dans ton dossier Ansible avant de lancer la commande
+          ansible-playbook -i inventories/setup.yml playbook.yml
