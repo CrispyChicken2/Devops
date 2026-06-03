@@ -101,10 +101,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ansible
 
+      - name: Install community.docker Ansible collection
+        run: ansible-galaxy collection install community.docker
+
       - name: Create vars.yml on the fly
         run: |
-          mkdir -p ansible/inventories
-          cat <<EOF > ansible/inventories/vars.yml
+          cat <<EOF > my-project/ansible/inventories/vars.yml
           ---
           postgres_db: "${{ secrets.ENV_POSTGRES_DB }}"
           postgres_user: "${{ secrets.ENV_POSTGRES_USER }}"
@@ -115,6 +117,5 @@ jobs:
         env:
           ANSIBLE_HOST_KEY_CHECKING: "False"
         run: |
-          cd ansible
-          # Comme la clé est chargée dans l'agent SSH en tâche de fond, on vide la variable de ton setup.yml pour forcer Ansible à l'utiliser !
-          ansible-playbook -i inventories/setup.yml playbook.yml -e "ansible_ssh_private_key_file="
+          cd my-project/ansible
+          ansible-playbook -i inventories/setup.yml playbook.yml
