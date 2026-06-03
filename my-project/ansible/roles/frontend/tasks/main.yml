@@ -1,0 +1,11 @@
+---
+- name: Run Frontend Container
+  docker_container:
+    name: devfront
+    image: "{{ dockerhub_username }}/tp-devops-frontend:latest"
+    pull: true
+    recreate: true
+    networks:
+      - name: app-network
+    restart_policy: always
+    state: started

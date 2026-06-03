@@ -9,7 +9,5 @@
       - name: app-network
     ports:
       - "80:80"
-    env:
-      SIMPLEAPI_HOST: "tp-api"
     restart_policy: always
     state: started
