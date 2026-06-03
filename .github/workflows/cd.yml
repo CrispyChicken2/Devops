@@ -113,6 +113,9 @@ jobs:
           EOF
 
       - name: Run Ansible Playbook
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "False" # Toujours indispensable sur GitHub pour éviter le prompt de confirmation
         run: |
-          cd ansible # Navigue dans ton dossier Ansible avant de lancer la commande
-          ansible-playbook -i inventories/setup.yml playbook.yml
+          cd ansible
+          # L'argument --private-key écrase le /home/asus/ de ton setup.yml
+          ansible-playbook -i inventories/setup.yml playbook.yml --private-key ~/.ssh/id_rsa
