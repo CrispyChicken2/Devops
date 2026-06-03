@@ -1,0 +1,13 @@
+---
+- name: Run Database Container
+  docker_container:
+    name: database-1
+    image: crispychicken02/devops-database:1.0
+    networks:
+      - name: app-network
+    env:
+      POSTGRES_DB: "db"
+      POSTGRES_USER: "usr"
+      POSTGRES_PASSWORD: "pwd"
+    restart_policy: always
+    state: started

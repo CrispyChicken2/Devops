@@ -1,0 +1,15 @@
+---
+- name: Run Reverse Proxy HTTPD Container
+  docker_container:
+    name: httpd-1
+    image: crispychicken02/devops-httpd:1.0
+    networks:
+      - name: app-network
+    ports:
+      - "80:80"
+    links:
+      - "tp-api:${SIMPLEAPI_HOST}"
+    env:
+      SIMPLEAPI_HOST: "tp-api"  # On cible le vrai nom du conteneur API !
+    restart_policy: always
+    state: started
