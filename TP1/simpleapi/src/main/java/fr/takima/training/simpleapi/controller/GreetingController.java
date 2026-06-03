@@ -16,5 +16,6 @@ public class GreetingController {
         return new Greeting(counter.incrementAndGet(), String.format(TEMPLATE, name));
     }
 
-    record Greeting(long id, String content) { }
+    record Greeting(long id, String content) {
+    }
 }

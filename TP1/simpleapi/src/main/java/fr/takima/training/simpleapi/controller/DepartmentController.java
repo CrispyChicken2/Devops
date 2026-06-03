@@ -28,7 +28,7 @@ public class DepartmentController {
     }
 
     @GetMapping("/{departmentName}/students")
-    public ResponseEntity<Object> getDepartmentList(@PathVariable(name="departmentName") String name) {
+    public ResponseEntity<Object> getDepartmentList(@PathVariable(name = "departmentName") String name) {
         Optional<Department> optionalDepartment = Optional.ofNullable(this.departmentService.getDepartmentByName(name));
         if (optionalDepartment.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -38,7 +38,7 @@ public class DepartmentController {
     }
 
     @GetMapping("/{departmentName}")
-    public ResponseEntity<Object> getDepartmentByName(@PathVariable(name="departmentName") String name) {
+    public ResponseEntity<Object> getDepartmentByName(@PathVariable(name = "departmentName") String name) {
         Optional<Department> optionalDepartment = Optional.ofNullable(this.departmentService.getDepartmentByName(name));
         if (optionalDepartment.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -48,7 +48,7 @@ public class DepartmentController {
     }
 
     @GetMapping("/{departmentName}/count")
-    public ResponseEntity<Object> getDepartmentCountByName(@PathVariable(name="departmentName") String name) {
+    public ResponseEntity<Object> getDepartmentCountByName(@PathVariable(name = "departmentName") String name) {
         Optional<Department> optionalDepartment = Optional.ofNullable(this.departmentService.getDepartmentByName(name));
         if (optionalDepartment.isEmpty()) {
             return ResponseEntity.notFound().build();
