@@ -2,7 +2,9 @@
 - name: Run Reverse Proxy HTTPD Container
   docker_container:
     name: httpd-1
-    image: crispychicken02/devops-httpd:1.0
+    image: "{{ dockerhub_username }}/tp-devops-httpd:latest"
+    pull: true
+    recreate: true
     networks:
       - name: app-network
     ports:

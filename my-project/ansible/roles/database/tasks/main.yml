@@ -2,7 +2,9 @@
 - name: Run Database Container
   docker_container:
     name: database-1
-    image: crispychicken02/devops-database:1.0
+    image: "{{ dockerhub_username }}/tp-devops-database:latest"
+    pull: true
+    recreate: true
     networks:
       - name: app-network
     env:

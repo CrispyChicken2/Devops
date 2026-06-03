@@ -2,7 +2,9 @@
 - name: Run Spring Boot App Container
   docker_container:
     name: tp-api
-    image: crispychicken02/java-simple-api:1.0
+    image: "{{ dockerhub_username }}/tp-devops-simple-api:latest"
+    pull: true
+    recreate: true
     networks:
       - name: app-network
     env:
