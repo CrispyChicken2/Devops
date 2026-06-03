@@ -7,11 +7,11 @@
       - name: app-network
     env:
       DB_HOST: "database-1"
-      DB_NAME: "db"
-      DB_USER: "usr"
-      DB_PASSWORD: "pwd"
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://database-1:5432/db"
-      SPRING_DATASOURCE_USERNAME: "usr"
-      SPRING_DATASOURCE_PASSWORD: "pwd"
+      DB_NAME: "{{ postgres_db }}"
+      DB_USER: "{{ postgres_user }}"
+      DB_PASSWORD: "{{ postgres_password }}"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://database-1:5432/{{ postgres_db }}"
+      SPRING_DATASOURCE_USERNAME: "{{ postgres_user }}"
+      SPRING_DATASOURCE_PASSWORD: "{{ postgres_password }}"
     restart_policy: always
     state: started

@@ -3,6 +3,9 @@
   gather_facts: true
   become: true
 
+  vars_files:
+    - inventories/vars.yml # On charge nos variables ici
+
   roles:
     - docker
     - network
