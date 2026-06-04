@@ -16,7 +16,7 @@ services:
       retries: 5
     restart: unless-stopped
 
-  backend:
+  tp-api:
     build:
       context: ./simpleapi
     image: java-simple-api:1.0
@@ -27,6 +27,14 @@ services:
     depends_on:
       database:
         condition: service_healthy
+    restart: unless-stopped
+
+  devfront:
+    build:
+      context: ./devFront
+    image: devops-frontend:1.0
+    networks:
+      - app-network
     restart: unless-stopped
 
   httpd:
@@ -40,7 +48,8 @@ services:
     networks:
       - app-network
     depends_on:
-      - backend
+      - tp-api
+      - devfront
     restart: unless-stopped
 
 networks:
