@@ -1,7 +1,7 @@
 ---
-- name: Run Spring Boot App Container
+- name: Run Spring Boot App Containers
   docker_container:
-    name: tp-api
+    name: "{{ item }}"
     image: "{{ dockerhub_username }}/tp-devops-simple-api:latest"
     pull: true
     recreate: true
@@ -17,3 +17,6 @@
       SPRING_DATASOURCE_PASSWORD: "{{ postgres_password }}"
     restart_policy: always
     state: started
+  loop:
+    - backend-1
+    - backend-2
